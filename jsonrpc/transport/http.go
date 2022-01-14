@@ -2,22 +2,26 @@ package transport
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/umbracle/go-web3/jsonrpc/codec"
 	"github.com/valyala/fasthttp"
+	"github.com/valyala/fasthttp/fasthttpproxy"
 )
 
 // HTTP is an http transport
 type HTTP struct {
-	addr   string
-	client *fasthttp.Client
+	addr    string
+	client  *fasthttp.Client
 	headers map[string]string
 }
 
 func newHTTP(addr string, headers map[string]string) *HTTP {
 	return &HTTP{
-		addr:   addr,
-		client: &fasthttp.Client{},
+		addr: addr,
+		client: &fasthttp.Client{
+			Dial: fasthttpproxy.FasthttpProxyHTTPDialerTimeout(time.Second * 2),
+		},
 		headers: headers,
 	}
 }
